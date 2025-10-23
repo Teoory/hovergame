@@ -1,20 +1,23 @@
-import './App.css'
-import { useMousePosition } from './gameManager/useMousePosition'
-import { useRef, useState, useContext, useEffect } from 'react'
-import { CoinContext } from './hooks/coinContext'
+import "./App.css";
+import { useMousePosition } from "./gameManager/useMousePosition";
+import { useRef, useState, useContext, useEffect } from "react";
+import { CoinContext } from "./hooks/coinContext";
 
 function formatCoins(n) {
   const abs = Math.abs(n);
   const units = [
-    { value: 1e12, symbol: 'T' },
-    { value: 1e9, symbol: 'B' },
-    { value: 1e6, symbol: 'M' },
-    { value: 1e3, symbol: 'K' },
+    { value: 1e12, symbol: "T" },
+    { value: 1e9, symbol: "B" },
+    { value: 1e6, symbol: "M" },
+    { value: 1e3, symbol: "K" },
   ];
   for (const u of units) {
     if (abs >= u.value) {
       const val = n / u.value;
-      const str = val >= 10 ? Math.round(val).toString() : val.toFixed(1).replace(/\.0$/, '');
+      const str =
+        val >= 10
+          ? Math.round(val).toString()
+          : val.toFixed(1).replace(/\.0$/, "");
       return str + u.symbol;
     }
   }
@@ -29,11 +32,10 @@ function App() {
 
   const { coins, addCoins } = useContext(CoinContext);
   const { hoverPower, setHoverPower } = useContext(CoinContext);
-  const { hoverTimer } = useContext(CoinContext);
+  const { hoverTimer, setHoverTimer } = useContext(CoinContext);
 
   const coinsText = formatCoins(coins);
   const collectMs = hoverTimer || 2000;
-  // Progress + RAF --- IGNORE ---
   const [progress, setProgress] = useState(0);
   const rafRef = useRef(null);
   const startRef = useRef(0);
@@ -71,40 +73,114 @@ function App() {
 
   return (
     <>
-      <div className='mouseInfo'>
-        <span>X: {Math.round(mousePosition.x)}, Y: {Math.round(mousePosition.y)}</span>
+      <div className="mouseInfo">
+        <span>
+          X: {Math.round(mousePosition.x)}, Y: {Math.round(mousePosition.y)}
+        </span>
         <span style={{ marginLeft: 20 }}>Coins: {coinsText}</span>
       </div>
 
-      <div ref={myref} className='gameArea'>
-        <div className='gameBorder'></div>
+      <div ref={myref} className="gameArea">
+        <div className="gameBorder"></div>
 
         <div
-          className='hoveringButton'
+          className="hoveringButton"
           style={{
-            left: buttonPos.x, top: buttonPos.y,
-            cursor: isHovered ? 'cell' : 'default'
+            left: buttonPos.x,
+            top: buttonPos.y,
+            cursor: isHovered ? "cell" : "default",
           }}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          {!isHovered && 'Hover Over Me!'}
+          {!isHovered && "Hover Over Me!"}
 
           <div
-            className='hoveringButtonHover'
+            className="hoveringButtonHover"
             style={{
               opacity: progress,
-              transition: 'none'
+              transition: "none",
             }}
           >
-            <span><strong>Hovering!</strong></span>
-            <span>Power: <strong>{hoverPower}</strong></span>
-            <span>Coins: <strong>{coins}</strong></span>
+            <span>
+              <strong>Hovering!</strong>
+            </span>
+            <span>
+              Power: <strong>{hoverPower}</strong>
+            </span>
+            <span>
+              Coins: <strong>{coins}</strong>
+            </span>
+          </div>
+        </div>
+
+        <div className="marketButtons">
+          <h3>Market Upgrades</h3>
+          <div className="hoverButtonsMarketArea">
+            <span>Hover Power: {hoverPower}</span>
+              <button
+                disabled={coins < 200}
+                className={coins < 200 && "disabledMarketButton"}
+                onClick={() => {
+                  addCoins(-200);
+                  setHoverPower(hoverPower + 1);
+                }}
+              >
+                <span>Buy +1 </span>
+                <span>Hover Power </span>
+                <span>(200 Coins)</span>
+              </button>
+              <button
+                disabled={coins < 400}
+                className={coins < 400 && "disabledMarketButton"}
+                onClick={() => {
+                  addCoins(-400);
+                  setHoverPower(hoverPower * 2);
+                }}
+              >
+                <span>Buy x2 </span>
+                <span>Hover Power </span>
+                <span>(400 Coins)</span>
+              </button>
+          </div>
+
+          <div className="hoverTimerMarketArea">
+            <span>Hover Timer: {hoverTimer} ms</span>
+            {hoverTimer > 500 && (
+              <button
+                disabled={coins < 300}
+                className={coins < 300 && "disabledMarketButton"}
+                onClick={() => {
+                  addCoins(-300);
+                  const newTimer = Math.max(500, hoverTimer - 50);
+                  setHoverTimer(newTimer);
+                }}
+              >
+                <span>Decrease Hover</span>
+                <span> Timer by 50ms </span>
+                <span>(300 Coins)</span>
+              </button>
+            )}
+            {hoverTimer > 500 && (
+              <button
+                disabled={coins < 600}
+                className={coins < 600 && "disabledMarketButton"}
+                onClick={() => {
+                  addCoins(-600);
+                  const newTimer = Math.max(500, hoverTimer - 100);
+                  setHoverTimer(newTimer);
+                }}
+              >
+                <span>Decrease Hover </span>
+                <span>Timer by 100ms </span>
+                <span>(600 Coins)</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

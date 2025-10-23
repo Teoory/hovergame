@@ -20,6 +20,9 @@
     border-radius: 6px;
     overflow: hidden;
     z-index: 1;
+    display: flex;
+    justify-content: space-around;
+    align-items: start;
 }
 
 .gameBorder {
@@ -68,4 +71,54 @@
     align-items: center;
     justify-content: center;
     text-align: center;
+}
+
+/* Market Buttons */
+.marketButtons {
+    position: relative;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    z-index: 4;
+}
+
+.disabledMarketButton {
+    background-color: darkred !important;
+    border: 1px solid red !important;
+    cursor: not-allowed !important;
+    &:hover {
+        background-color: red !important;
+    }
+}
+
+.marketButtons button {
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    background-color: darkgreen;
+    border: 1px solid green;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 2px;
+    &:hover {
+        background-color: green;
+    }
+}
+
+.hoverButtonsMarketArea,
+.hoverTimerMarketArea {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-right: 20px;
 }
