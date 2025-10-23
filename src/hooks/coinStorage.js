@@ -6,6 +6,7 @@ const coinStorage = () => {
 
   useEffect(() => {
     const storedCoins = localStorage.getItem('coins');
+
     if (storedCoins) {
       addCoins(parseInt(storedCoins, 10));
     }
