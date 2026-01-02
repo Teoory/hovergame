@@ -27,6 +27,17 @@ const CoinProvider = ({ children }) => {
         setCoins((prevCoins) => prevCoins + amount);
     }, []);
 
+    const resetGame = useCallback(() => {
+        setCoins(0);
+        setHoverPower(1);
+        setHoverTimer(2000);
+        setTotalTimer(0);
+        localStorage.removeItem('coins');
+        localStorage.removeItem('hoverPower');
+        localStorage.removeItem('hoverTimer');
+        localStorage.removeItem('totalTimer');
+    }, []);
+
     useEffect(() => {
         localStorage.setItem('coins', coins);
         localStorage.setItem('hoverPower', hoverPower);
@@ -35,7 +46,7 @@ const CoinProvider = ({ children }) => {
     }, [coins, hoverPower, hoverTimer, totalTimer]);
 
     return (
-        <CoinContext.Provider value={{ coins, addCoins, hoverPower, setHoverPower, hoverTimer, setHoverTimer, totalTimer, setTotalTimer }}>
+        <CoinContext.Provider value={{ coins, addCoins, hoverPower, setHoverPower, hoverTimer, setHoverTimer, totalTimer, setTotalTimer, resetGame }}>
             {children}
         </CoinContext.Provider>
     );

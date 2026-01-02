@@ -24,6 +24,40 @@ function formatCoins(n) {
   return String(n);
 }
 
+function calculateGiftCoins(currentCoins) {
+  // Geçersiz değer kontrolü
+  if (!currentCoins || isNaN(currentCoins) || currentCoins < 0) {
+    currentCoins = 0;
+  }
+  
+  let min, max;
+  
+  if (currentCoins < 100) {
+    min = 0;
+    max = 100;
+  } else if (currentCoins < 500) {
+    min = 100;
+    max = 500;
+  } else if (currentCoins < 1000) {
+    min = 1000;
+    max = 2000;
+  } else if (currentCoins < 2000) {
+    min = 2000;
+    max = 4000;
+  } else if (currentCoins < 5000) {
+    min = 4000;
+    max = 8000;
+  } else if (currentCoins < 10000) {
+    min = 8000;
+    max = 15000;
+  } else {
+    min = Math.floor(currentCoins * 0.8);
+    max = Math.floor(currentCoins * 1.5);
+  }
+  
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function formatTime(seconds) {
   const hrs = Math.floor(seconds / 3600);
   const mins = Math.floor((seconds % 3600) / 60);
@@ -46,8 +80,10 @@ function App() {
   const { hoverPower, setHoverPower } = useContext(CoinContext);
   const { hoverTimer, setHoverTimer } = useContext(CoinContext);
   const { totalTimer, setTotalTimer } = useContext(CoinContext);
+  const { resetGame } = useContext(CoinContext);
 
   const [currentTimer, setCurrentTimer] = useState(0);
+  const [giftNotification, setGiftNotification] = useState(null);
 
   const coinsText = formatCoins(coins);
   const timeText = formatTime(totalTimer);
@@ -56,10 +92,21 @@ function App() {
   const [progress, setProgress] = useState(0);
   const rafRef = useRef(null);
   const startRef = useRef(0);
+  const lastGiftTimeRef = useRef(-1);
 
   useEffect(() => {
     if (hoverPower < 1) setHoverPower(1);
   }, [hoverPower, setHoverPower]);
+
+  const handleReset = () => {
+    if (window.confirm('Tüm oyun verilerini sıfırlamak istediğinizden emin misiniz?')) {
+      resetGame();
+      setCurrentTimer(0);
+      setGiftNotification(null);
+      setProgress(0);
+      lastGiftTimeRef.current = -1;
+    }
+  };
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -71,6 +118,25 @@ function App() {
       clearInterval(intervalId);
     };
   }, []);
+
+  // Her 5 dakikada bir coin hediyesi (totalTimer'a göre)
+  useEffect(() => {
+    const currentGiftPeriod = Math.floor(totalTimer / 300);
+    
+    // Yeni bir 5 dakikalık periyoda girildiyse ve daha önce bu periyotta hediye verilmediyse
+    if (totalTimer > 0 && totalTimer % 300 === 0 && lastGiftTimeRef.current !== currentGiftPeriod) {
+      lastGiftTimeRef.current = currentGiftPeriod;
+      
+      const giftAmount = calculateGiftCoins(coins);
+      addCoins(giftAmount);
+      setGiftNotification(giftAmount);
+      
+      // 1 dakika sonra bildirimi kaldır
+      setTimeout(() => {
+        setGiftNotification(null);
+      }, 60000);
+    }
+  }, [totalTimer, coins, addCoins]);
 
   useEffect(() => {
     if (!isHovered) {
@@ -108,7 +174,16 @@ function App() {
         <span style={{ marginLeft: 20 }}>Coins: {coinsText}</span>
         <span style={{ marginLeft: 20}}>currentTimer: {timeTextCurrent}</span>
         <span style={{ marginLeft: 20}}>totalTimer: {timeText}</span>
+        <button className="resetButton" onClick={handleReset}>Sıfırla</button>
       </div>
+
+      {giftNotification && (
+        <div className="giftNotification">
+          <h2>🎁 Hediye Coin! 🎁</h2>
+          <p>Tebrikler! {formatCoins(giftNotification)} coin kazandınız!</p>
+          <button className="giftNotificationCloseButton" onClick={() => setGiftNotification(null)}>Kapat</button>
+        </div>
+      )}
 
       <div ref={myref} className="gameArea">
         <div className="gameBorder"></div>

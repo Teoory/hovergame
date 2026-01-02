@@ -9,6 +9,29 @@
     padding: 5px 10px;
     border-radius: 5px;
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.resetButton {
+    padding: 5px 15px;
+    font-size: 13px;
+    background-color: #c62828;
+    color: white;
+    border: 1px solid #b71c1c;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: bold;
+}
+
+.resetButton:hover {
+    background-color: #d32f2f;
+}
+
+.resetButton:active {
+    background-color: #b71c1c;
 }
 
 .gameArea {
@@ -121,4 +144,53 @@
     flex-direction: column;
     gap: 5px;
     margin-right: 20px;
+}
+
+.giftNotification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px 50px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    text-align: center;
+    animation: giftPulse 2s ease-in-out infinite;
+    border: 3px solid gold;
+}
+
+.giftNotificationCloseButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.giftNotification h2 {
+    margin: 0 0 15px 0;
+    font-size: 32px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.giftNotification p {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+@keyframes giftPulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
 }
