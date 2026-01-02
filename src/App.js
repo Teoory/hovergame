@@ -24,6 +24,18 @@ function formatCoins(n) {
   return String(n);
 }
 
+function formatTime(seconds) {
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  return (
+    (hrs > 0 ? hrs + "h " : "") +
+    (mins > 0 ? mins + "m " : "") +
+    secs +
+    "s"
+  ).trim();
+}
+
 function App() {
   const myref = useRef(null);
   const [buttonPos] = useState({ x: 0, y: 0 });
@@ -33,8 +45,13 @@ function App() {
   const { coins, addCoins } = useContext(CoinContext);
   const { hoverPower, setHoverPower } = useContext(CoinContext);
   const { hoverTimer, setHoverTimer } = useContext(CoinContext);
+  const { totalTimer, setTotalTimer } = useContext(CoinContext);
+
+  const [currentTimer, setCurrentTimer] = useState(0);
 
   const coinsText = formatCoins(coins);
+  const timeText = formatTime(totalTimer);
+  const timeTextCurrent = formatTime(currentTimer);
   const collectMs = hoverTimer || 2000;
   const [progress, setProgress] = useState(0);
   const rafRef = useRef(null);
@@ -43,6 +60,17 @@ function App() {
   useEffect(() => {
     if (hoverPower < 1) setHoverPower(1);
   }, [hoverPower, setHoverPower]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTimer((prev) => prev + 1);
+      setTotalTimer((prev) => prev + 1);
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
 
   useEffect(() => {
     if (!isHovered) {
@@ -78,6 +106,8 @@ function App() {
           X: {Math.round(mousePosition.x)}, Y: {Math.round(mousePosition.y)}
         </span>
         <span style={{ marginLeft: 20 }}>Coins: {coinsText}</span>
+        <span style={{ marginLeft: 20}}>currentTimer: {timeTextCurrent}</span>
+        <span style={{ marginLeft: 20}}>totalTimer: {timeText}</span>
       </div>
 
       <div ref={myref} className="gameArea">

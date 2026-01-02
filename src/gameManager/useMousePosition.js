@@ -11,7 +11,6 @@ export const useMousePosition = (ref) => {
       const rect = el.getBoundingClientRect();
       let x = event.clientX - rect.left;
       let y = event.clientY - rect.top;
-      // alan dışına taşmaları engelle
       x = Math.max(0, Math.min(x, rect.width));
       y = Math.max(0, Math.min(y, rect.height));
       setMousePosition({ x, y });

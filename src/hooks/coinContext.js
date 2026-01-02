@@ -1,4 +1,4 @@
-import React, {useEffect, useState, createContext} from 'react'
+import React, {useEffect, useState, createContext, useCallback} from 'react'
 
 export const CoinContext = createContext();
 
@@ -18,18 +18,24 @@ const CoinProvider = ({ children }) => {
         return stored ? parseInt(stored, 10) : 2000;
     });
 
-    const addCoins = (amount) => {
+    const [totalTimer, setTotalTimer] = useState(() => {
+        const stored = localStorage.getItem('totalTimer');
+        return stored ? parseInt(stored, 10) : 0;
+    });
+
+    const addCoins = useCallback((amount) => {
         setCoins((prevCoins) => prevCoins + amount);
-    };
+    }, []);
 
     useEffect(() => {
         localStorage.setItem('coins', coins);
         localStorage.setItem('hoverPower', hoverPower);
         localStorage.setItem('hoverTimer', hoverTimer);
-    }, [coins, hoverPower, hoverTimer]);
+        localStorage.setItem('totalTimer', totalTimer);
+    }, [coins, hoverPower, hoverTimer, totalTimer]);
 
     return (
-        <CoinContext.Provider value={{ coins, addCoins, hoverPower, setHoverPower, hoverTimer, setHoverTimer }}>
+        <CoinContext.Provider value={{ coins, addCoins, hoverPower, setHoverPower, hoverTimer, setHoverTimer, totalTimer, setTotalTimer }}>
             {children}
         </CoinContext.Provider>
     );
