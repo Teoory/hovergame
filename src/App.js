@@ -75,12 +75,25 @@ function App() {
   const [buttonPos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const mousePosition = useMousePosition(myref);
-
-  const { coins, addCoins } = useContext(CoinContext);
-  const { hoverPower, setHoverPower } = useContext(CoinContext);
-  const { hoverTimer, setHoverTimer } = useContext(CoinContext);
-  const { totalTimer, setTotalTimer } = useContext(CoinContext);
-  const { resetGame } = useContext(CoinContext);
+  const {
+    coins,
+    addCoins,
+    hoverPower,
+    setHoverPower,
+    hoverTimer,
+    setHoverTimer,
+    totalTimer,
+    setTotalTimer,
+    hoverPowerPriceAdd,
+    setHoverPowerPriceAdd,
+    hoverPowerPriceMult,
+    setHoverPowerPriceMult,
+    hoverTimerPrice50,
+    setHoverTimerPrice50,
+    hoverTimerPrice100,
+    setHoverTimerPrice100,
+    resetGame,
+  } = useContext(CoinContext);
 
   const [currentTimer, setCurrentTimer] = useState(0);
   const [giftNotification, setGiftNotification] = useState(null);
@@ -97,6 +110,11 @@ function App() {
   useEffect(() => {
     if (hoverPower < 1) setHoverPower(1);
   }, [hoverPower, setHoverPower]);
+
+  const getIncreasedPrice = (price) => {
+    const next = Math.ceil(price * 1.07);
+    return next <= price ? price + 1 : next;
+  };
 
   const handleReset = () => {
     if (window.confirm('Tüm oyun verilerini sıfırlamak istediğinizden emin misiniz?')) {
@@ -175,6 +193,7 @@ function App() {
         <span style={{ marginLeft: 20}}>currentTimer: {timeTextCurrent}</span>
         <span style={{ marginLeft: 20}}>totalTimer: {timeText}</span>
         <button className="resetButton" onClick={handleReset}>Sıfırla</button>
+        <button className="addCoinButton" onClick={() => addCoins(100)}>Add 100 Coins</button>
       </div>
 
       {giftNotification && (
@@ -224,28 +243,30 @@ function App() {
           <div className="hoverButtonsMarketArea">
             <span>Hover Power: {hoverPower}</span>
               <button
-                disabled={coins < 200}
-                className={coins < 200 && "disabledMarketButton"}
+                disabled={coins < hoverPowerPriceAdd}
+                className={coins < hoverPowerPriceAdd && "disabledMarketButton"}
                 onClick={() => {
-                  addCoins(-200);
+                  addCoins(-hoverPowerPriceAdd);
                   setHoverPower(hoverPower + 1);
+                  setHoverPowerPriceAdd(getIncreasedPrice(hoverPowerPriceAdd));
                 }}
               >
                 <span>Buy +1 </span>
                 <span>Hover Power </span>
-                <span>(200 Coins)</span>
+                <span>({formatCoins(hoverPowerPriceAdd)} Coins)</span>
               </button>
               <button
-                disabled={coins < 400}
-                className={coins < 400 && "disabledMarketButton"}
+                disabled={coins < hoverPowerPriceMult}
+                className={coins < hoverPowerPriceMult && "disabledMarketButton"}
                 onClick={() => {
-                  addCoins(-400);
+                  addCoins(-hoverPowerPriceMult);
                   setHoverPower(hoverPower * 2);
+                  setHoverPowerPriceMult(getIncreasedPrice(hoverPowerPriceMult));
                 }}
               >
                 <span>Buy x2 </span>
                 <span>Hover Power </span>
-                <span>(400 Coins)</span>
+                <span>({formatCoins(hoverPowerPriceMult)} Coins)</span>
               </button>
           </div>
 
@@ -253,32 +274,34 @@ function App() {
             <span>Hover Timer: {hoverTimer} ms</span>
             {hoverTimer > 500 && (
               <button
-                disabled={coins < 300}
-                className={coins < 300 && "disabledMarketButton"}
+                disabled={coins < hoverTimerPrice50}
+                className={coins < hoverTimerPrice50 && "disabledMarketButton"}
                 onClick={() => {
-                  addCoins(-300);
+                  addCoins(-hoverTimerPrice50);
                   const newTimer = Math.max(500, hoverTimer - 50);
                   setHoverTimer(newTimer);
+                  setHoverTimerPrice50(getIncreasedPrice(hoverTimerPrice50));
                 }}
               >
                 <span>Decrease Hover</span>
                 <span> Timer by 50ms </span>
-                <span>(300 Coins)</span>
+                <span>({formatCoins(hoverTimerPrice50)} Coins)</span>
               </button>
             )}
             {hoverTimer > 500 && (
               <button
-                disabled={coins < 600}
-                className={coins < 600 && "disabledMarketButton"}
+                disabled={coins < hoverTimerPrice100}
+                className={coins < hoverTimerPrice100 && "disabledMarketButton"}
                 onClick={() => {
-                  addCoins(-600);
+                  addCoins(-hoverTimerPrice100);
                   const newTimer = Math.max(500, hoverTimer - 100);
                   setHoverTimer(newTimer);
+                  setHoverTimerPrice100(getIncreasedPrice(hoverTimerPrice100));
                 }}
               >
                 <span>Decrease Hover </span>
                 <span>Timer by 100ms </span>
-                <span>(600 Coins)</span>
+                <span>({formatCoins(hoverTimerPrice100)} Coins)</span>
               </button>
             )}
           </div>
