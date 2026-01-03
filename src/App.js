@@ -116,6 +116,11 @@ function App() {
     return next <= price ? price + 1 : next;
   };
 
+  const getIncreasedPriceMult = (price) => {
+    const next = Math.ceil(price * 1.5);
+    return next <= price ? price + 1 : next;
+  };
+
   const handleReset = () => {
     if (window.confirm('Tüm oyun verilerini sıfırlamak istediğinizden emin misiniz?')) {
       resetGame();
@@ -261,7 +266,7 @@ function App() {
                 onClick={() => {
                   addCoins(-hoverPowerPriceMult);
                   setHoverPower(hoverPower * 2);
-                  setHoverPowerPriceMult(getIncreasedPrice(hoverPowerPriceMult));
+                  setHoverPowerPriceMult(getIncreasedPriceMult(hoverPowerPriceMult));
                 }}
               >
                 <span>Buy x2 </span>
